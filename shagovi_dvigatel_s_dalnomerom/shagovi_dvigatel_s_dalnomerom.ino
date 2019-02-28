@@ -1,5 +1,7 @@
 /* Программа управления шаговым двигателем и
 измерения расстояния УЗ датчиком, установленным на вал двигателя.
+УЗ дальномер HC-SR04
+
 Создано   - 28.12.2018
 Изменено - 25.02.2019
 */
@@ -46,7 +48,7 @@ void loop()
         break;     
 
 	}	
-	distance = RangFiltr();
+	distance = Ranging();
 	Serial.println(distance);
 }
 }
@@ -64,38 +66,13 @@ int Ranging(){ //возвращает измеренное расстояние 
 	return dist;
 }
 
-int RangFiltr(){ // вычисляет среднее из 3-х близких значений
-				  // если одно любое отличается более чем на delta
-				  // вычисляет среднее из 2-х. Мажоритарный алгоритм.
-	int r [3];
-	int f_dist;
-	int delta;  // ошибка измерения
-	delta = 4;
-	for (int i = 0; i < 3; i++){
-		r[i] = Ranging();
-		delay(100);
-	}
-// все три отсчёта верны
-	if ((abs(r[0] - r[1]) < delta) and (abs(r[0] - r[2]) < delta) and (abs(r[1] - r[2]) < delta)) {
-		f_dist = (r[0] + r[1] + r[2]) / 3; }
-// ошибка первого отсчёта
-	if ((abs(r[0] - r[1]) > delta) and (abs(r[0] - r[2]) > delta) and (abs(r[1] - r[2]) < delta)) {
-		f_dist = (r[1] + r[2]) / 2;	}
-// ошибка второго отсчёта
-	if ((abs(r[0] - r[1]) > delta) and (abs(r[0] - r[2]) < delta) and (abs(r[1] - r[2]) > delta)) {
-		f_dist = (r[0] + r[2]) / 2;	}
-// ошибка третьего отсчёта
-	if ((abs(r[0] - r[1]) < delta) and (abs(r[0] - r[2]) > delta) and (abs(r[1] - r[2]) > delta)) {
-		f_dist = (r[0] + r[1]) / 2;	}
-	return f_dist;
-}
 void Ranging_cycle(){ // поворачивает УЗ датчик на ~180 гр. вправо,
 					  // на каждом шаге измеряет дальность,
 					  // передает её на монитор
 					  // и возвращает датчик в исходное
 	for (int i = 0; i < 6; i++){
 		Povorot_sector(-1);
-		distance = RangFiltr();
+		distance = Ranging();
 		Serial.println(distance);
 	}
 	stepper.step(-4);
@@ -122,10 +99,11 @@ void Stop_Motor(){		// отключение питания от двигател
 	}
 }
 
-void Ranging_sector(){	// сканирование сектора 180 градусов
+void Ranging_sector(){	// сканирование сектора 180 градусов 
+						// с шагом 1.8 градуса
 	for (int i = 0; i < 100; i++){
 		stepper.step(-1);
-		distance = RangFiltr();
+		distance = Ranging();
 		Serial.println(distance);
 	}
 	Povorot_180(1);
