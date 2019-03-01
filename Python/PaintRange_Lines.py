@@ -68,6 +68,7 @@ def InitCOM():
 def ReadRangeFrom_COM():
 	cmd = [ord('C')] # запуск сканирования
 	ser.write(cmd)
+	# range_s.clear()  # инициализация массива данных
 	for i in range(6):
 		s = ser.readline()
 		range_s.append(s[:-2]) # удаление служебных символов в конце
@@ -94,7 +95,7 @@ def PaintRange():
 	MassivTochekRange = []
 	for i in range(len(range_s)):
 		MassivTochekRange.append([50*i+10, (500 - 5 * int(range_s[i]))])
-
+		print(MassivTochekRange[i])
 	pygame.draw.lines(sc, COLOR_TEXT, False, MassivTochekRange,2)
 	pygame.display.update()
 
@@ -149,12 +150,14 @@ PaintSimbol("t", sc.get_width() - 17, 17)
 PaintMetki()
 pygame.display.update()
 running = True 
+global range_s
+range_s = [] # инициализация массива данных
 while running:
 	for i in pygame.event.get():
 		if i.type == pygame.QUIT:
 			running = False
 		elif i.type == pygame.KEYDOWN:
-			range_s = [] # инициализация массива данных
+			range_s.clear()  # инициализация массива данных
 			if i.key == pygame.K_s:
 				PaintRange100()
 			elif i.key == pygame.K_c:
