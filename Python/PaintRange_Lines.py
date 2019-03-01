@@ -95,7 +95,6 @@ def PaintRange():
 	MassivTochekRange = []
 	for i in range(len(range_s)):
 		MassivTochekRange.append([50*i+10, (500 - 5 * int(range_s[i]))])
-		print(MassivTochekRange[i])
 	pygame.draw.lines(sc, COLOR_TEXT, False, MassivTochekRange,2)
 	pygame.display.update()
 
@@ -112,12 +111,26 @@ def PaintRange100():
 	pygame.draw.lines(sc, COLOR_TEXT, False, MassivTochekRange,2)
 	pygame.display.update()
 
+def LiniiKoordinat():
+	# Линии координат 
+	pygame.draw.line(sc, COLOR_LINE,[10, sc.get_height()-10], [sc.get_width()-10, sc.get_height()-10])
+	pygame.draw.line(sc, COLOR_LINE,[10, 10], [10, sc.get_height()-10])
+	pygame.display.update()
+	#  Обозначение линий координат и их разметка
+	PaintSimbol("0", 17, 17)
+	PaintSimbol("D", 17, sc.get_height() - 17)
+	PaintSimbol("t", sc.get_width() - 17, 17)
+	PaintMetki()
+	pygame.display.update()
+
+
 COLOR_FONE = (32, 32, 32)
 COLOR_TEXT = (0, 255, 64)
 COLOR_LINE = (255, 255, 255)
 COLOR_GRAF = (255, 255, 0)
 
 pygame.init()
+font = pygame.font.SysFont('Consolas', 18)
 
 ports = serial_ports()
 if len(ports) > 0:
@@ -137,18 +150,7 @@ sc = pygame.display.set_mode((1100, 600))
 pygame.display.set_caption("Дальность")
 
 sc.fill(COLOR_FONE)
-# Линии координат 
-pygame.draw.line(sc, COLOR_LINE,[10, sc.get_height()-10], [sc.get_width()-10, sc.get_height()-10])
-pygame.draw.line(sc, COLOR_LINE,[10, 10], [10, sc.get_height()-10])
-pygame.display.update()
-
-#  Обозначение линий координат и их разметка
-font = pygame.font.SysFont('Consolas', 18)
-PaintSimbol("0", 17, 17)
-PaintSimbol("D", 17, sc.get_height() - 17)
-PaintSimbol("t", sc.get_width() - 17, 17)
-PaintMetki()
-pygame.display.update()
+LiniiKoordinat()
 running = True 
 global range_s
 range_s = [] # инициализация массива данных
@@ -157,6 +159,9 @@ while running:
 		if i.type == pygame.QUIT:
 			running = False
 		elif i.type == pygame.KEYDOWN:
+			sc.fill(COLOR_FONE)
+			LiniiKoordinat()
+			pygame.display.update()
 			range_s.clear()  # инициализация массива данных
 			if i.key == pygame.K_s:
 				PaintRange100()
