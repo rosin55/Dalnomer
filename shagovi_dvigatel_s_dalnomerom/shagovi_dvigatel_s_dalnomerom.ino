@@ -48,8 +48,8 @@ void loop()
         break;     
 
 	}	
-	distance = Ranging();
-	Serial.println(distance);
+	// distance = Ranging();
+	// Serial.println(distance);
 }
 }
 
@@ -80,7 +80,7 @@ void Ranging_cycle(){ // поворачивает УЗ датчик на ~180 г
 }
 
 void Povorot_180(int direction){ // поворот на 180 гр. 
-								 // в заданном напрвлении	
+								 // в заданном направлении	
 	for(int i = 0; i < 25; i++){
 		stepper.step(direction*STEPS);
 	}
